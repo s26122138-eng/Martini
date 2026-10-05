@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HANGYODON 人魚漢頓作品集入口 🌊</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Zen Maru Gothic 圓體字型 -->
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hangyo-blue: #71D8DE;
+            --hangyo-light-blue: #BBEFF2;
+            --hangyo-dark-blue: #2CA8B0;
+            --hangyo-coral: #FF8F9C;
+            --hangyo-yellow: #FFE370;
+            --hangyo-bg: #E8FAFC;
+            --hangyo-border: #2A4858;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif, system-ui;
+            background-color: var(--hangyo-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(113, 216, 222, 0.18) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 143, 156, 0.18) 0%, transparent 40%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* 水底漂浮氣泡動畫 */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.65);
+            border-radius: 50%;
+            border: 2px solid rgba(113, 216, 222, 0.4);
+            pointer-events: none;
+            animation: floatUp 10s infinite linear;
+            bottom: -50px;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 已解鎖關卡按鈕 (3D 卡通立體感 + Hover 閃光) */
+        .level-btn-unlocked {
+            background: linear-gradient(135deg, #A8F0F5 0%, #71D8DE 100%);
+            border: 3.5px solid var(--hangyo-border);
+            box-shadow: 0 6px 0 var(--hangyo-border);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 閃光光芒掃過效果 */
+        .level-btn-unlocked::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 45%,
+                rgba(255, 255, 255, 0.65) 50%,
+                transparent 55%
+            );
+            transform: rotate(30deg) translateY(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .level-btn-unlocked:hover::before {
+            transform: rotate(30deg) translateY(100%);
+        }
+
+        .level-btn-unlocked:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 0 var(--hangyo-border);
+            background: linear-gradient(135deg, #BBEFF2 0%, #5ECBD2 100%);
+        }
+
+        .level-btn-unlocked:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--hangyo-border);
+        }
+
+        /* 未解鎖關卡按鈕樣式 (灰色與晃動效果) */
+        .level-btn-locked {
+            background: #E2E8F0;
+            border: 3.5px solid #94A3B8;
+            box-shadow: 0 5px 0 #94A3B8;
+            border-radius: 20px;
+            cursor: not-allowed;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .level-btn-locked:hover {
+            animation: lockWiggle 0.4s ease-in-out;
+            background: #CBD5E1;
+        }
+
+        @keyframes lockWiggle {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-4px) rotate(-2deg); }
+            40% { transform: translateX(4px) rotate(2deg); }
+            60% { transform: translateX(-3px) rotate(-1deg); }
+            80% { transform: translateX(3px) rotate(1deg); }
+        }
+
+        /* 大頭貼懸浮與邊框動畫 */
+        .avatar-container {
+            border: 5px solid var(--hangyo-border);
+            box-shadow: 0 8px 0 var(--hangyo-border);
+            animation: gentleBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* 自訂彈出式 Toast 提示框 */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--hangyo-border);
+            color: #FFF;
+            text-align: center;
+            border-radius: 50px;
+            padding: 12px 24px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%) translateY(20px);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            font-weight: 700;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center justify-between min-h-screen relative">
+
+    <div id="bubbles-container" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col items-center">
+        
+        <header class="text-center my-6 flex flex-col items-center">
+            
+            <!-- 個人大頭貼 -->
+            <div class="relative group">
+                <div class="avatar-container w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white relative z-10">
+                    <!-- 使用人魚漢頓主題配色 Placeholder 大頭貼 -->
+                    <img 
+                        src="https://placehold.co/200x200/71D8DE/2A4858?text=HANGYODON+🐟&font=Zen+Maru+Gothic" 
+                        alt="My Avatar" 
+                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        onerror="this.src='https://placehold.co/200x200/71D8DE/ffffff?text=Avatar';"
+                    />
+                </div>
+                <!-- 人魚漢頓的好朋友 Sayuri 章魚小妹徽章 -->
+                <div class="absolute -bottom-2 -right-2 z-20 bg-[#FF8F9C] border-2 border-[#2A4858] rounded-full px-3 py-1 text-xs font-bold text-white shadow-md flex items-center gap-1 transform rotate-6">
+                    <span>🐙 Sayuri</span>
+                </div>
+            </div>
+
+            <!-- 名字與主題標題 -->
+            <div class="mt-5 space-y-2">
+                <div class="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border-2 border-[#2A4858] shadow-sm">
+                    <span class="w-3 h-3 rounded-full bg-[#71D8DE] animate-ping"></span>
+                    <span class="text-xs md:text-sm font-bold text-[#2A4858]">網頁程式設計作品集</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black text-[#2A4858] tracking-wide drop-shadow-sm">
+                    人魚漢頓的闖關之旅 🌊
+                </h1>
+                <p class="text-sm md:text-base font-bold text-[#3B6E8C] max-w-md mx-auto">
+                    歡迎來到我的 HANGYODON 作品集！完成每週任務解鎖新關卡，點擊關卡開啟網頁！✨
+                </p>
+            </div>
+
+            <!-- 關卡解鎖進度條 -->
+            <div class="w-full max-w-xs md:max-w-md bg-white border-3 border-[#2A4858] rounded-full h-6 mt-5 p-1 flex items-center shadow-[0_4px_0_#2A4858] relative overflow-hidden">
+                <div class="bg-gradient-to-r from-[#FF8F9C] to-[#FFE370] h-full rounded-full transition-all duration-500" style="width: 12.5%;"></div>
+                <span class="absolute inset-0 flex items-center justify-center text-xs font-black text-[#2A4858]">
+                    關卡解鎖進度：2 / 16 (12.5%)
+                </span>
+            </div>
+        </header>
+
+        <section class="w-full mt-4 mb-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 px-2">
+                
+                <!-- Week 1 - 已解鎖 -->
+                <a href="w1/index.html" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-[#FFE370] text-[#2A4858] text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
+                            STAGE 01
+                        </span>
+                        <span class="text-2xl transform group-hover:rotate-12 transition-transform">💳</span>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
+                            Week 1 - 數位名片
+                        </h3>
+                        <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
+                            <span>點擊闖關</span>
+                            <span class="group-hover:translate-x-1 transition-transform">➔</span>
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Week 2 - 已解鎖 -->
+                <a href="w2/index.html" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-[#FF8F9C] text-white text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
+                            STAGE 02
+                        </span>
+                        <span class="text-2xl transform group-hover:rotate-12 transition-transform">🍜</span>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
+                            Week 2 - 今天吃甚麼?
+                        </h3>
+                        <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
+                            <span>點擊闖關</span>
+                            <span class="group-hover:translate-x-1 transition-transform">➔</span>
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Week 3 ~ 16 未解鎖關卡列表 -->
+                <!-- Week 3 -->
+                <button onclick="showLockedToast(3)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 03</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 3 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 4 -->
+                <button onclick="showLockedToast(4)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 04</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 4 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 5 -->
+                <button onclick="showLockedToast(5)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 05</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 5 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 6 -->
+                <button onclick="showLockedToast(6)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 06</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 6 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 7 -->
+                <button onclick="showLockedToast(7)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 07</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 7 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 8 -->
+                <button onclick="showLockedToast(8)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 08</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 8 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 9 -->
+                <button onclick="showLockedToast(9)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 09</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 9 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 10 -->
+                <button onclick="showLockedToast(10)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 10</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 10 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 11 -->
+                <button onclick="showLockedToast(11)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 11</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 11 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 12 -->
+                <button onclick="showLockedToast(12)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 12</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 12 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 13 -->
+                <button onclick="showLockedToast(13)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 13</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 13 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 14 -->
+                <button onclick="showLockedToast(14)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 14</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 14 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 15 -->
+                <button onclick="showLockedToast(15)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 15</span>
+                        <span class="text-xl">🔒</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 15 - 尚未開放</h3>
+                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                    </div>
+                </button>
+
+                <!-- Week 16 -->
+                <button onclick="showLockedToast(16)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                    <div class="flex justify-between items-start">
+                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 16</span>
+                        <span class="text-xl">🏆</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-600">Week 16 - 期末大挑戰</h3>
+                        <p class="text-xs text-slate-400 mt-1">最終關卡 🔒</p>
+                    </div>
+                </button>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="z-10 text-center py-4 text-xs font-bold text-[#3B6E8C]">
+        <p>© 2026 HANGYODON Web Portfolio | 人魚漢頓水藍色風格單頁選單</p>
+    </footer>
+
+    <!-- Toast 提示視窗 -->
+    <div id="toast">🔒 第 X 週關卡尚未解鎖喔！</div>
+
+    <script>
+        // 生成動態水底泡泡
+        function createBubbles() {
+            const container = document.getElementById('bubbles-container');
+            const bubbleCount = 20;
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // 隨機尺寸 (8px ~ 32px)
+                const size = Math.random() * 24 + 8;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // 隨機水平位置
+                bubble.style.left = `${Math.random() * 100}%`;
+                
+                // 隨機上升動畫時間 (6s ~ 14s) 與延遲
+                const duration = Math.random() * 8 + 6;
+                const delay = Math.random() * 5;
+                bubble.style.animationDuration = `${duration}s`;
+                bubble.style.animationDelay = `${delay}s`;
+
+                container.appendChild(bubble);
+            }
+        }
+
+        // 點擊未解鎖關卡的提示訊息
+        let toastTimeout;
+        function showLockedToast(weekNum) {
+            const toast = document.getElementById('toast');
+            toast.innerText = `🔒 Week ${weekNum} 關卡尚未解鎖，請繼續努力破關！`;
+            toast.classList.add('show');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // 頁面載入完成後啟動動畫
+        window.onload = function() {
+            createBubbles();
+        };
+    </script>
+</body>
+</html>

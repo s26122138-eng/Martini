@@ -193,4 +193,148 @@
                     人魚漢頓的闖關之旅 🌊
                 </h1>
                 <p class="text-sm md:text-base font-bold text-[#3B6E8C] max-w-md mx-auto">
-                    歡迎來到我的 HANGYODON 作品集！完成每週任務解鎖新關卡，點擊關卡開啟網頁！
+                    歡迎來到我的 HANGYODON 作品集！完成每週任務解鎖新關卡，點擊關卡開啟網頁！✨
+                </p>
+            </div>
+
+            <!-- 動態關卡解鎖進度條 (由 JS 自動計算) -->
+            <div class="w-full max-w-xs md:max-w-md bg-white border-3 border-[#2A4858] rounded-full h-6 mt-5 p-1 flex items-center shadow-[0_4px_0_#2A4858] relative overflow-hidden">
+                <div id="progress-bar" class="bg-gradient-to-r from-[#FF8F9C] to-[#FFE370] h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-xs font-black text-[#2A4858]">
+                    關卡解鎖進度計算中...
+                </span>
+            </div>
+        </header>
+
+        <!-- 關卡網格容器 (由 JS 自動生成) -->
+        <section class="w-full mt-4 mb-10">
+            <div id="levels-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 px-2"></div>
+        </section>
+
+    </main>
+
+    <footer class="z-10 text-center py-4 text-xs font-bold text-[#3B6E8C]">
+        <p>© 2026 HANGYODON Web Portfolio | 人魚漢頓水藍色風格單頁選單</p>
+    </footer>
+
+    <!-- Toast 提示視窗 -->
+    <div id="toast">🔒 第 X 週關卡尚未解鎖喔！</div>
+
+    <script>
+        // 1. 關卡資料設定（未來有新關卡只需修改此處的 unlocked: true 與連結）
+        const levels = [
+            { week: 1, title: 'Week 1 - 數位名片', icon: '💳', unlocked: true, url: 'w1/index.html', tagColor: 'bg-[#FFE370]' },
+            { week: 2, title: 'Week 2 - 今天吃甚麼?', icon: '🍜', unlocked: true, url: 'w2/index.html', tagColor: 'bg-[#FF8F9C] text-white' },
+            { week: 3, title: 'Week 3 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 4, title: 'Week 4 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 5, title: 'Week 5 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 6, title: 'Week 6 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 7, title: 'Week 7 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 8, title: 'Week 8 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 9, title: 'Week 9 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 10, title: 'Week 10 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 11, title: 'Week 11 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 12, title: 'Week 12 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 13, title: 'Week 13 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 14, title: 'Week 14 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 15, title: 'Week 15 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 16, title: 'Week 16 - 期末大挑戰', icon: '🏆', unlocked: false }
+        ];
+
+        // 2. 渲染關卡與更新進度條
+        function renderLevels() {
+            const gridContainer = document.getElementById('levels-grid');
+            const total = levels.length;
+            const unlockedCount = levels.filter(level => level.unlocked).length;
+            const percentage = ((unlockedCount / total) * 100).toFixed(1);
+
+            // 更新進度條文字與長度
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-text').innerText = `關卡解鎖進度：${unlockedCount} / ${total} (${percentage}%)`;
+
+            // 動態生成 HTML
+            gridContainer.innerHTML = levels.map(level => {
+                const stageNum = String(level.week).padStart(2, '0');
+                
+                if (level.unlocked) {
+                    const badgeClass = level.tagColor || 'bg-[#FFE370] text-[#2A4858]';
+                    return `
+                        <a href="${level.url}" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
+                            <div class="flex justify-between items-start">
+                                <span class="${badgeClass} text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
+                                    STAGE ${stageNum}
+                                </span>
+                                <span class="text-2xl transform group-hover:rotate-12 transition-transform">${level.icon}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
+                                    ${level.title}
+                                </h3>
+                                <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
+                                    <span>點擊闖關</span>
+                                    <span class="group-hover:translate-x-1 transition-transform">➔</span>
+                                </p>
+                            </div>
+                        </a>
+                    `;
+                } else {
+                    return `
+                        <button onclick="showLockedToast(${level.week})" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
+                            <div class="flex justify-between items-start">
+                                <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE ${stageNum}</span>
+                                <span class="text-xl">${level.icon}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-slate-600">${level.title}</h3>
+                                <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
+                            </div>
+                        </button>
+                    `;
+                }
+            }).join('');
+        }
+
+        // 3. 生成動態水底泡泡
+        function createBubbles() {
+            const container = document.getElementById('bubbles-container');
+            const bubbleCount = 20;
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                const size = Math.random() * 24 + 8;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${Math.random() * 100}%`;
+                
+                const duration = Math.random() * 8 + 6;
+                const delay = Math.random() * 5;
+                bubble.style.animationDuration = `${duration}s`;
+                bubble.style.animationDelay = `${delay}s`;
+
+                container.appendChild(bubble);
+            }
+        }
+
+        // 4. 點擊未解鎖關卡的 Toast 提示
+        let toastTimeout;
+        function showLockedToast(weekNum) {
+            const toast = document.getElementById('toast');
+            toast.innerText = `🔒 Week ${weekNum} 關卡尚未解鎖，請繼續努力破關！`;
+            toast.classList.add('show');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // 5. 頁面載入後初始化
+        window.onload = function() {
+            createBubbles();
+            renderLevels();
+        };
+    </script>
+</body>
+</html>

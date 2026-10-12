@@ -3,485 +3,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HANGYODON 人魚漢頓作品集入口 🌊</title>
-    <!-- Tailwind CSS CDN -->
+    <title>清爽淺藍迷因產生器 - Soft Blue Meme Generator</title>
+    
+    <!-- 1. Google Fonts 引入：Outfit (現代質感字型) + Noto Sans TC (繁體中文粗體) + Impact (經典迷因字體) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- 2. Tailwind CSS CDN (用於快速現代化響應式切版) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font: Zen Maru Gothic 圓體字型 -->
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- 3. html2canvas CDN (將 DOM 轉為 PNG 實現下載功能) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
-        :root {
-            --hangyo-blue: #71D8DE;
-            --hangyo-light-blue: #BBEFF2;
-            --hangyo-dark-blue: #2CA8B0;
-            --hangyo-coral: #FF8F9C;
-            --hangyo-yellow: #FFE370;
-            --hangyo-bg: #E8FAFC;
-            --hangyo-border: #2A4858;
-        }
-
+        /* 全域字型與淺藍漸層背景設定 */
         body {
-            font-family: 'Zen Maru Gothic', sans-serif, system-ui;
-            background-color: var(--hangyo-bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(113, 216, 222, 0.18) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 143, 156, 0.18) 0%, transparent 40%);
+            font-family: 'Outfit', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #f0f9ff 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            color: #0c4a6e;
+        }
+
+        /* 迷因文字專用字型與渲染優化 */
+        .meme-text {
+            font-family: 'Impact', 'Noto Sans TC', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 1.15;
+            word-break: break-word;
             user-select: none;
+            letter-spacing: 1px;
         }
 
-        /* 水底漂浮氣泡動畫 */
-        .bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.65);
-            border-radius: 50%;
-            border: 2px solid rgba(113, 216, 222, 0.4);
-            pointer-events: none;
-            animation: floatUp 10s infinite linear;
-            bottom: -50px;
+        /* 柔和淺藍玻璃擬態卡片 (Glassmorphism Effect) */
+        .blue-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(186, 230, 253, 0.8);
+            box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 0 8px 10px -6px rgba(14, 165, 233, 0.05);
+            border-radius: 1.5rem;
         }
 
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-110vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* 已解鎖關卡按鈕 (3D 卡通立體感 + Hover 閃光) */
-        .level-btn-unlocked {
-            background: linear-gradient(135deg, #A8F0F5 0%, #71D8DE 100%);
-            border: 3.5px solid var(--hangyo-border);
-            box-shadow: 0 6px 0 var(--hangyo-border);
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        /* 閃光光芒掃過效果 */
-        .level-btn-unlocked::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 45%,
-                rgba(255, 255, 255, 0.65) 50%,
-                transparent 55%
-            );
-            transform: rotate(30deg) translateY(-100%);
-            transition: transform 0.6s ease;
-        }
-
-        .level-btn-unlocked:hover::before {
-            transform: rotate(30deg) translateY(100%);
-        }
-
-        .level-btn-unlocked:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 12px 0 var(--hangyo-border);
-            background: linear-gradient(135deg, #BBEFF2 0%, #5ECBD2 100%);
-        }
-
-        .level-btn-unlocked:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 var(--hangyo-border);
-        }
-
-        /* 未解鎖關卡按鈕樣式 (灰色與晃動效果) */
-        .level-btn-locked {
-            background: #E2E8F0;
-            border: 3.5px solid #94A3B8;
-            box-shadow: 0 5px 0 #94A3B8;
-            border-radius: 20px;
-            cursor: not-allowed;
-            position: relative;
+        /* 精緻輸入框樣式 */
+        .custom-input {
+            background: #f0f9ff;
+            border: 2px solid #bae6fd;
+            border-radius: 0.75rem;
             transition: all 0.2s ease;
+            color: #0369a1;
         }
 
-        .level-btn-locked:hover {
-            animation: lockWiggle 0.4s ease-in-out;
-            background: #CBD5E1;
+        .custom-input:focus {
+            background: #ffffff;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+            outline: none;
         }
 
-        @keyframes lockWiggle {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-4px) rotate(-2deg); }
-            40% { transform: translateX(4px) rotate(2deg); }
-            60% { transform: translateX(-3px) rotate(-1deg); }
-            80% { transform: translateX(3px) rotate(1deg); }
+        /* 滑桿 Track 與 Thumb 淺藍造型優化 */
+        input[type=range] {
+            accent-color: #0284c7;
         }
 
-        /* 大頭貼懸浮與邊框動畫 */
-        .avatar-container {
-            border: 5px solid var(--hangyo-border);
-            box-shadow: 0 8px 0 var(--hangyo-border);
-            animation: gentleBounce 3s ease-in-out infinite;
+        /* 隱藏預設原生圖片上傳按鈕 */
+        input[type="file"] {
+            display: none;
         }
 
-        @keyframes gentleBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+        /* 浮動微動效 */
+        @keyframes pulse-slow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
         }
 
-        /* 自訂彈出式 Toast 提示框 */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: var(--hangyo-border);
-            color: #FFF;
-            text-align: center;
-            border-radius: 50px;
-            padding: 12px 24px;
-            position: fixed;
-            z-index: 50;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%) translateY(20px);
-            opacity: 0;
-            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-            font-weight: 700;
-        }
-
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .floating-badge {
+            animation: pulse-slow 3s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="p-4 md:p-8 flex flex-col items-center justify-between min-h-screen relative">
+<body class="p-4 sm:p-6 md:p-10 flex flex-col items-center justify-center">
 
-    <div id="bubbles-container" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+    <!-- 頁面頂部標題區域 -->
+    <header class="text-center mb-8 w-full max-w-6xl">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100/90 text-sky-700 text-sm font-bold mb-3 border border-sky-200 floating-badge">
+            <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-ping"></span>
+            海洋風淺藍調 · 高畫質迷因編輯器
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-sky-950 tracking-tight">
+            💧 迷因產生器 <span class="text-sky-500 font-light">Meme Studio</span>
+        </h1>
+        <p class="mt-2 text-sky-700 font-medium text-sm sm:text-base">
+            上傳圖片、動態輸入文字，打造專屬於你的搞笑迷因！
+        </p>
+    </header>
 
-    <main class="w-full max-w-5xl z-10 flex flex-col items-center">
+    <!-- 主要內容區 (桌面端左右分欄 12 欄位 / 手機端自動切換為單欄上下疊放) -->
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <header class="text-center my-6 flex flex-col items-center">
-            
-            <!-- 個人大頭貼 -->
-            <div class="relative group">
-                <div class="avatar-container w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white relative z-10">
-                    <!-- 使用人魚漢頓主題配色 Placeholder 大頭貼 -->
-                    <img 
-                        src="https://placehold.co/200x200/71D8DE/2A4858?text=HANGYODON+🐟&font=Zen+Maru+Gothic" 
-                        alt="My Avatar" 
-                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        onerror="this.src='https://placehold.co/200x200/71D8DE/ffffff?text=Avatar';"
-                    />
-                </div>
-                <!-- 人魚漢頓的好朋友 Sayuri 章魚小妹徽章 -->
-                <div class="absolute -bottom-2 -right-2 z-20 bg-[#FF8F9C] border-2 border-[#2A4858] rounded-full px-3 py-1 text-xs font-bold text-white shadow-md flex items-center gap-1 transform rotate-6">
-                    <span>🐙 Sayuri</span>
+        <!-- 左側：控制面板 Control Panel (大螢幕佔據 5 欄) -->
+        <section class="lg:col-span-5 blue-card p-6 sm:p-8 space-y-6">
+            <div class="flex items-center justify-between border-b border-sky-100 pb-4">
+                <h2 class="text-xl font-extrabold text-sky-900 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    編輯控制台
+                </h2>
+                <span class="text-xs text-sky-500 font-semibold bg-sky-50 px-2.5 py-1 rounded-md border border-sky-100">Live Editor</span>
+            </div>
+
+            <!-- 1. 圖片來源區：本機上傳 + 快速內建預設圖片 -->
+            <div class="space-y-2">
+                <label class="block font-bold text-xs uppercase tracking-wider text-sky-800">1. 選擇或上傳圖片底圖</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <!-- 自訂圖片上傳按鈕 -->
+                    <label for="imageLoader" class="cursor-pointer bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-4 rounded-xl text-center text-sm shadow-md shadow-sky-500/20 transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        上傳本機圖片
+                    </label>
+                    <input type="file" id="imageLoader" accept="image/*">
+
+                    <!-- 下拉選單選擇預設圖片 -->
+                    <select id="presetSelect" class="custom-input p-2.5 font-bold text-sm cursor-pointer w-full">
+                        <option value="" disabled selected>✨ 選擇內建經典模板</option>
+                        <option value="sky-1">藍天白雲風格</option>
+                        <option value="ocean-2">清爽深海風格</option>
+                        <option value="mint-3">薄荷微風風格</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- 名字與主題標題 -->
-            <div class="mt-5 space-y-2">
-                <div class="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border-2 border-[#2A4858] shadow-sm">
-                    <span class="w-3 h-3 rounded-full bg-[#71D8DE] animate-ping"></span>
-                    <span class="text-xs md:text-sm font-bold text-[#2A4858]">網頁程式設計作品集</span>
+            <!-- 2. 雙層文字輸入欄位 -->
+            <div class="space-y-3">
+                <div>
+                    <label for="topTextInput" class="block font-bold text-xs uppercase tracking-wider text-sky-800 mb-1">2. 上方文字 (Top Text)</label>
+                    <input type="text" id="topTextInput" placeholder="輸入上方文字..." value="當週五下班前半小時" class="custom-input w-full p-3 font-semibold text-sm">
                 </div>
-                <h1 class="text-3xl md:text-5xl font-black text-[#2A4858] tracking-wide drop-shadow-sm">
-                    人魚漢頓的闖關之旅 🌊
-                </h1>
-                <p class="text-sm md:text-base font-bold text-[#3B6E8C] max-w-md mx-auto">
-                    歡迎來到我的 HANGYODON 作品集！完成每週任務解鎖新關卡，點擊關卡開啟網頁！✨
-                </p>
+                <div>
+                    <label for="bottomTextInput" class="block font-bold text-xs uppercase tracking-wider text-sky-800 mb-1">3. 下方文字 (Bottom Text)</label>
+                    <input type="text" id="bottomTextInput" placeholder="輸入下方文字..." value="主管突然發訊息說：在嗎？" class="custom-input w-full p-3 font-semibold text-sm">
+                </div>
             </div>
 
-            <!-- 關卡解鎖進度條 -->
-            <div class="w-full max-w-xs md:max-w-md bg-white border-3 border-[#2A4858] rounded-full h-6 mt-5 p-1 flex items-center shadow-[0_4px_0_#2A4858] relative overflow-hidden">
-                <div class="bg-gradient-to-r from-[#FF8F9C] to-[#FFE370] h-full rounded-full transition-all duration-500" style="width: 12.5%;"></div>
-                <span class="absolute inset-0 flex items-center justify-center text-xs font-black text-[#2A4858]">
-                    關卡解鎖進度：2 / 16 (12.5%)
-                </span>
-            </div>
-        </header>
-
-        <section class="w-full mt-4 mb-10">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 px-2">
+            <!-- 3. 滑桿參數控制 (文字大小、垂直微調、顏色選擇) -->
+            <div class="space-y-4 bg-sky-50/70 p-4 rounded-xl border border-sky-100">
+                <h3 class="font-extrabold text-xs uppercase tracking-wider text-sky-900 border-b border-sky-200/60 pb-2">
+                    🎛️ 參數滑桿微調
+                </h3>
                 
-                <!-- Week 1 - 已解鎖 -->
-                <a href="w1/index.html" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-[#FFE370] text-[#2A4858] text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
-                            STAGE 01
-                        </span>
-                        <span class="text-2xl transform group-hover:rotate-12 transition-transform">💳</span>
+                <!-- 滑桿：字體大小 -->
+                <div>
+                    <div class="flex justify-between font-bold text-xs text-sky-800 mb-1">
+                        <span>字體大小 (Font Size)</span>
+                        <span id="fontSizeVal" class="text-sky-600 font-mono">38px</span>
+                    </div>
+                    <input type="range" id="fontSizeSlider" min="16" max="72" value="38" class="w-full cursor-pointer">
+                </div>
+
+                <!-- 滑桿：上方文字高低位置 -->
+                <div>
+                    <div class="flex justify-between font-bold text-xs text-sky-800 mb-1">
+                        <span>上方文字高度 (Top Offset)</span>
+                        <span id="topPosVal" class="text-sky-600 font-mono">6%</span>
+                    </div>
+                    <input type="range" id="topPosSlider" min="0" max="45" value="6" class="w-full cursor-pointer">
+                </div>
+
+                <!-- 滑桿：下方文字高低位置 -->
+                <div>
+                    <div class="flex justify-between font-bold text-xs text-sky-800 mb-1">
+                        <span>下方文字高度 (Bottom Offset)</span>
+                        <span id="bottomPosVal" class="text-sky-600 font-mono">6%</span>
+                    </div>
+                    <input type="range" id="bottomPosSlider" min="0" max="45" value="6" class="w-full cursor-pointer">
+                </div>
+
+                <!-- 文字顏色與外框顏色調整 -->
+                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-sky-200/50">
+                    <div>
+                        <label class="block font-bold text-xs text-sky-800 mb-1">文字填充色</label>
+                        <input type="color" id="textColorPicker" value="#ffffff" class="w-full h-9 rounded-lg border-2 border-sky-200 cursor-pointer bg-white p-0.5">
                     </div>
                     <div>
-                        <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
-                            Week 1 - 數位名片
-                        </h3>
-                        <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
-                            <span>點擊闖關</span>
-                            <span class="group-hover:translate-x-1 transition-transform">➔</span>
-                        </p>
+                        <label class="block font-bold text-xs text-sky-800 mb-1">文字粗邊框色</label>
+                        <input type="color" id="strokeColorPicker" value="#0f172a" class="w-full h-9 rounded-lg border-2 border-sky-200 cursor-pointer bg-white p-0.5">
                     </div>
-                </a>
-
-                <!-- Week 2 - 已解鎖 -->
-                <a href="w2/index.html" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-[#FF8F9C] text-white text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
-                            STAGE 02
-                        </span>
-                        <span class="text-2xl transform group-hover:rotate-12 transition-transform">🍜</span>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
-                            Week 2 - 今天吃甚麼?
-                        </h3>
-                        <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
-                            <span>點擊闖關</span>
-                            <span class="group-hover:translate-x-1 transition-transform">➔</span>
-                        </p>
-                    </div>
-                </a>
-
-                <!-- Week 3- 已解鎖 -->
-                <a href="w2/index.html" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-[#FF8F9C] text-white text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
-                            STAGE 03
-                        </span>
-                        <span class="text-2xl transform group-hover:rotate-12 transition-transform">🍜</span>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
-                            Week 3 - 迷因產生器
-                        </h3>
-                        <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
-                            <span>點擊闖關</span>
-                            <span class="group-hover:translate-x-1 transition-transform">➔</span>
-                        </p>
-                    </div>
-                </a>
-
-                <!-- Week 4 ~ 16 未解鎖關卡列表 -->
-
-                <!-- Week 4 -->
-                <button onclick="showLockedToast(4)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 04</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 4 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 5 -->
-                <button onclick="showLockedToast(5)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 05</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 5 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 6 -->
-                <button onclick="showLockedToast(6)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 06</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 6 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 7 -->
-                <button onclick="showLockedToast(7)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 07</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 7 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 8 -->
-                <button onclick="showLockedToast(8)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 08</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 8 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 9 -->
-                <button onclick="showLockedToast(9)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 09</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 9 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 10 -->
-                <button onclick="showLockedToast(10)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 10</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 10 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 11 -->
-                <button onclick="showLockedToast(11)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 11</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 11 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 12 -->
-                <button onclick="showLockedToast(12)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 12</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 12 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 13 -->
-                <button onclick="showLockedToast(13)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 13</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 13 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 14 -->
-                <button onclick="showLockedToast(14)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 14</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 14 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 15 -->
-                <button onclick="showLockedToast(15)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 15</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 15 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 16 -->
-                <button onclick="showLockedToast(16)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 16</span>
-                        <span class="text-xl">🏆</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 16 - 期末大挑戰</h3>
-                        <p class="text-xs text-slate-400 mt-1">最終關卡 🔒</p>
-                    </div>
-                </button>
-
+                </div>
             </div>
+
+            <!-- 4. 超酷一鍵下載圖檔按鈕 -->
+            <button id="downloadBtn" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-extrabold text-base py-3.5 px-6 rounded-xl shadow-lg shadow-sky-500/30 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span>一鍵下載圖檔 (.PNG)</span>
+            </button>
         </section>
 
+        <!-- 右側：迷因即時預覽區 Preview Area (大螢幕佔據 7 欄) -->
+        <section class="lg:col-span-7 flex flex-col items-center w-full">
+            <div class="w-full blue-card p-4 sm:p-5">
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-sky-800 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-sky-500"></span> 即時畫布預覽 (Live Canvas)
+                    </span>
+                    <span class="text-[11px] font-bold bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full border border-sky-200">
+                        自動高畫質繪製
+                    </span>
+                </div>
+                
+                <!-- 迷因圖片與文字容器 (html2canvas 截圖下載的目標區塊) -->
+                <div id="memeContainer" class="relative w-full overflow-hidden rounded-xl bg-slate-900 flex items-center justify-center min-h-[320px] sm:min-h-[420px] shadow-inner select-none">
+                    
+                    <!-- 底圖 -->
+                    <img id="memeImage" class="w-full h-auto object-contain block max-h-[580px] rounded-lg transition-opacity duration-300" alt="迷因底圖預覽" src="">
+
+                    <!-- 上方文字層 -->
+                    <div id="topTextOverlay" class="meme-text absolute w-full text-center px-4 left-0 transition-all duration-75">
+                        當週五下班前半小時
+                    </div>
+
+                    <!-- 下方文字層 -->
+                    <div id="bottomTextOverlay" class="meme-text absolute w-full text-center px-4 left-0 transition-all duration-75">
+                        主管突然發訊息說：在嗎？
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提示說明 -->
+            <p class="text-xs font-semibold text-sky-700 mt-3 text-center flex items-center gap-1">
+                <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                滑動微調滑桿可即時調整字型大小與上下位置，下載時將自動輸出為高清 PNG 圖片。
+            </p>
+        </section>
     </main>
 
-    <footer class="z-10 text-center py-4 text-xs font-bold text-[#3B6E8C]">
-        <p>© 2026 HANGYODON Web Portfolio | 人魚漢頓水藍色風格單頁選單</p>
-    </footer>
-
-    <!-- Toast 提示視窗 -->
-    <div id="toast">🔒 第 X 週關卡尚未解鎖喔！</div>
-
+    <!-- JavaScript 核心程式碼 -->
     <script>
-        // 生成動態水底泡泡
-        function createBubbles() {
-            const container = document.getElementById('bubbles-container');
-            const bubbleCount = 20;
+        // ==========================================
+        // 1. 取得頁面上所有的 HTML 元件 (DOM)
+        // ==========================================
+        const imageLoader = document.getElementById('imageLoader');
+        const presetSelect = document.getElementById('presetSelect');
+        const topTextInput = document.getElementById('topTextInput');
+        const bottomTextInput = document.getElementById('bottomTextInput');
+        
+        // 滑桿與色彩選擇器 DOM
+        const fontSizeSlider = document.getElementById('fontSizeSlider');
+        const topPosSlider = document.getElementById('topPosSlider');
+        const bottomPosSlider = document.getElementById('bottomPosSlider');
+        const textColorPicker = document.getElementById('textColorPicker');
+        const strokeColorPicker = document.getElementById('strokeColorPicker');
 
-            for (let i = 0; i < bubbleCount; i++) {
-                const bubble = document.createElement('div');
-                bubble.classList.add('bubble');
-                
-                // 隨機尺寸 (8px ~ 32px)
-                const size = Math.random() * 24 + 8;
-                bubble.style.width = `${size}px`;
-                bubble.style.height = `${size}px`;
-                
-                // 隨機水平位置
-                bubble.style.left = `${Math.random() * 100}%`;
-                
-                // 隨機上升動畫時間 (6s ~ 14s) 與延遲
-                const duration = Math.random() * 8 + 6;
-                const delay = Math.random() * 5;
-                bubble.style.animationDuration = `${duration}s`;
-                bubble.style.animationDelay = `${delay}s`;
+        // 滑桿數據顯示 DOM
+        const fontSizeVal = document.getElementById('fontSizeVal');
+        const topPosVal = document.getElementById('topPosVal');
+        const bottomPosVal = document.getElementById('bottomPosVal');
 
-                container.appendChild(bubble);
+        // 迷因預覽與下載區域 DOM
+        const memeContainer = document.getElementById('memeContainer');
+        const memeImage = document.getElementById('memeImage');
+        const topTextOverlay = document.getElementById('topTextOverlay');
+        const bottomTextOverlay = document.getElementById('bottomTextOverlay');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // ==========================================
+        // 2. 預設清爽風格底圖生成器 (使用 SVG Canvas 動態產生，避免外部圖片 CORS 擋圖)
+        // ==========================================
+        function createOceanSVGPlaceholder(titleText, subtitleText, colorStart, colorEnd) {
+            const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+                <defs>
+                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:${colorStart};stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:${colorEnd};stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect width="800" height="600" fill="url(#grad)"/>
+                <circle cx="400" cy="300" r="180" fill="white" opacity="0.15"/>
+                <circle cx="400" cy="300" r="120" fill="white" opacity="0.1"/>
+                <text x="400" y="280" font-size="36" font-family="'Noto Sans TC', sans-serif" fill="#ffffff" text-anchor="middle" font-weight="900">${titleText}</text>
+                <text x="400" y="340" font-size="24" font-family="'Noto Sans TC', sans-serif" fill="#e0f2fe" text-anchor="middle" font-weight="bold">${subtitleText}</text>
+            </svg>`;
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+        }
+
+        // 初始化預設圖片 (初次開啟頁面時顯示)
+        memeImage.src = createOceanSVGPlaceholder("請在上方面板輸入文字", "或點擊上傳你自己的圖片", "#0284c7", "#0369a1");
+
+        // ==========================================
+        // 3. 本機圖片上傳處理 (FileReader 讀取技術，徹底告別跨域 CORS 錯誤)
+        // ==========================================
+        imageLoader.addEventListener('change', function(e) {
+            const file = e.target.files[0]; // 取得使用者選擇的檔案
+            if (file) {
+                const reader = new FileReader(); // 建立檔案讀取器
+                
+                // 當檔案讀取完成後執行的動作
+                reader.onload = function(event) {
+                    memeImage.src = event.target.result; // 將讀取到的 Base64 網址賦予給 <img> 標籤
+                };
+                
+                reader.readAsDataURL(file); // 開始以 DataURL 格式讀取圖檔
+                presetSelect.value = ""; // 清空下拉選單狀態
             }
+        });
+
+        // 內建預設圖片切換選單
+        presetSelect.addEventListener('change', function(e) {
+            const val = e.target.value;
+            if (val === 'sky-1') {
+                memeImage.src = createOceanSVGPlaceholder("晴空風格", "Clear Sky Style", "#38bdf8", "#0284c7");
+            } else if (val === 'ocean-2') {
+                memeImage.src = createOceanSVGPlaceholder("深海風格", "Deep Ocean Style", "#0f172a", "#0284c7");
+            } else if (val === 'mint-3') {
+                memeImage.src = createOceanSVGPlaceholder("薄荷風格", "Mint Fresh Style", "#0d9488", "#0284c7");
+            }
+        });
+
+        // ==========================================
+        // 4. 即時更新迷因文字與外觀樣式
+        // ==========================================
+        function updateMemeText() {
+            // 1. 同步文字內容
+            topTextOverlay.innerText = topTextInput.value || "";
+            bottomTextOverlay.innerText = bottomTextInput.value || "";
+
+            // 2. 取得目前滑桿與顏色的最新數值
+            const fontSize = fontSizeSlider.value;
+            const topPos = topPosSlider.value;
+            const bottomPos = bottomPosSlider.value;
+            const textColor = textColorPicker.value;
+            const strokeColor = strokeColorPicker.value;
+
+            // 3. 更新數值文字標籤
+            fontSizeVal.innerText = `${fontSize}px`;
+            topPosVal.innerText = `${topPos}%`;
+            bottomPosVal.innerText = `${bottomPos}%`;
+
+            // 4. 實時套用 CSS 樣式 (上方文字)
+            topTextOverlay.style.fontSize = `${fontSize}px`;
+            topTextOverlay.style.top = `${topPos}%`;
+            topTextOverlay.style.color = textColor;
+
+            // 5. 實時套用 CSS 樣式 (下方文字)
+            bottomTextOverlay.style.fontSize = `${fontSize}px`;
+            bottomTextOverlay.style.bottom = `${bottomPos}%`;
+            bottomTextOverlay.style.color = textColor;
+
+            // 6. 計算並產生 8 個方向的多重文字陰影 (模擬極粗描邊，確保在任何底圖上都清晰)
+            const strokeWidth = Math.max(2, Math.floor(fontSize / 12));
+            const strokeStyle = `
+                -${strokeWidth}px -${strokeWidth}px 0 ${strokeColor},
+                 ${strokeWidth}px -${strokeWidth}px 0 ${strokeColor},
+                -${strokeWidth}px  ${strokeWidth}px 0 ${strokeColor},
+                 ${strokeWidth}px  ${strokeWidth}px 0 ${strokeColor},
+                 0px -${strokeWidth}px 0 ${strokeColor},
+                 0px  ${strokeWidth}px 0 ${strokeColor},
+                -${strokeWidth}px  0px 0 ${strokeColor},
+                 ${strokeWidth}px  0px 0 ${strokeColor}
+            `;
+            
+            topTextOverlay.style.textShadow = strokeStyle;
+            bottomTextOverlay.style.textShadow = strokeStyle;
         }
 
-        // 點擊未解鎖關卡的提示訊息
-        let toastTimeout;
-        function showLockedToast(weekNum) {
-            const toast = document.getElementById('toast');
-            toast.innerText = `🔒 Week ${weekNum} 關卡尚未解鎖，請繼續努力破關！`;
-            toast.classList.add('show');
+        // 綁定監聽器：只要輸入框、滑桿或顏色有改變，立馬執行 updateMemeText 函式
+        [
+            topTextInput, 
+            bottomTextInput, 
+            fontSizeSlider, 
+            topPosSlider, 
+            bottomPosSlider, 
+            textColorPicker, 
+            strokeColorPicker
+        ].forEach(element => {
+            element.addEventListener('input', updateMemeText);
+        });
 
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
-        }
+        // 頁面初始化時先執行一次，載入預設樣式
+        updateMemeText();
 
-        // 頁面載入完成後啟動動畫
-        window.onload = function() {
-            createBubbles();
-        };
+        // ==========================================
+        // 5. 一鍵截圖並下載圖檔 (.PNG)
+        // ==========================================
+        downloadBtn.addEventListener('click', function() {
+            // 變更按鈕載入狀態 UI
+            const originalButtonContent = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>圖片生成中...</span>
+            `;
+            downloadBtn.disabled = true;
+
+            // 使用 html2canvas 將 #memeContainer 轉為高解析度 Canvas
+            html2canvas(memeContainer, {
+                useCORS: true,        // 允許跨域圖片繪製
+                scale: 2,             // 2倍解析度輸出 (高清清晰)
+                backgroundColor: null // 保持透明背景
+            }).then(canvas => {
+                // 將 Canvas 轉換成可下載的 PNG 圖片 URL
+                const link = document.createElement('a');
+                link.download = 'my-meme.png';            // 規定下載檔名
+                link.href = canvas.toDataURL('image/png'); // 取得 Base64 圖片數據
+                link.click();                             // 觸發自動下載
+
+                // 恢復按鈕原本樣式
+                downloadBtn.innerHTML = originalButtonContent;
+                downloadBtn.disabled = false;
+            }).catch(err => {
+                console.error("圖片繪製下載失敗:", err);
+                alert("下載失敗！請確定您使用的是標準圖檔格式。");
+                downloadBtn.innerHTML = originalButtonContent;
+                downloadBtn.disabled = false;
+            });
+        });
     </script>
 </body>
 </html>

@@ -170,7 +170,6 @@
             <!-- 個人大頭貼 -->
             <div class="relative group">
                 <div class="avatar-container w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white relative z-10">
-                    <!-- 使用人魚漢頓主題配色 Placeholder 大頭貼 -->
                     <img 
                         src="https://placehold.co/200x200/71D8DE/2A4858?text=HANGYODON+🐟&font=Zen+Maru+Gothic" 
                         alt="My Avatar" 
@@ -198,226 +197,18 @@
                 </p>
             </div>
 
-            <!-- 關卡解鎖進度條 -->
+            <!-- 動態關卡解鎖進度條 -->
             <div class="w-full max-w-xs md:max-w-md bg-white border-3 border-[#2A4858] rounded-full h-6 mt-5 p-1 flex items-center shadow-[0_4px_0_#2A4858] relative overflow-hidden">
-                <div class="bg-gradient-to-r from-[#FF8F9C] to-[#FFE370] h-full rounded-full transition-all duration-500" style="width: 12.5%;"></div>
-                <span class="absolute inset-0 flex items-center justify-center text-xs font-black text-[#2A4858]">
-                    關卡解鎖進度：2 / 16 (12.5%)
+                <div id="progress-bar" class="bg-gradient-to-r from-[#FF8F9C] to-[#FFE370] h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-xs font-black text-[#2A4858]">
+                    關卡解鎖進度計算中...
                 </span>
             </div>
         </header>
 
+        <!-- 關卡網格容器 (由 JS 自動生成) -->
         <section class="w-full mt-4 mb-10">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 px-2">
-                
-                <!-- Week 1 - 已解鎖 -->
-                <a href="w1/index.html" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-[#FFE370] text-[#2A4858] text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
-                            STAGE 01
-                        </span>
-                        <span class="text-2xl transform group-hover:rotate-12 transition-transform">💳</span>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
-                            Week 1 - 數位名片
-                        </h3>
-                        <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
-                            <span>點擊闖關</span>
-                            <span class="group-hover:translate-x-1 transition-transform">➔</span>
-                        </p>
-                    </div>
-                </a>
-
-                <!-- Week 2 - 已解鎖 -->
-                <a href="w2/index.html" class="level-btn-unlocked p-4 flex flex-col justify-between h-36 text-[#2A4858] group">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-[#FF8F9C] text-white text-xs font-black px-2.5 py-1 rounded-full border-2 border-[#2A4858] shadow-sm">
-                            STAGE 02
-                        </span>
-                        <span class="text-2xl transform group-hover:rotate-12 transition-transform">🍜</span>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-lg leading-snug group-hover:text-[#185358]">
-                            Week 2 - 今天吃甚麼?
-                        </h3>
-                        <p class="text-xs text-[#2C7A80] font-bold mt-1 flex items-center gap-1">
-                            <span>點擊闖關</span>
-                            <span class="group-hover:translate-x-1 transition-transform">➔</span>
-                        </p>
-                    </div>
-                </a>
-
-                <!-- Week 3 ~ 16 未解鎖關卡列表 -->
-                <!-- Week 3 -->
-                <button onclick="showLockedToast(3)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 03</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 3 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 4 -->
-                <button onclick="showLockedToast(4)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 04</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 4 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 5 -->
-                <button onclick="showLockedToast(5)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 05</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 5 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 6 -->
-                <button onclick="showLockedToast(6)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 06</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 6 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 7 -->
-                <button onclick="showLockedToast(7)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 07</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 7 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 8 -->
-                <button onclick="showLockedToast(8)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 08</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 8 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 9 -->
-                <button onclick="showLockedToast(9)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 09</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 9 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 10 -->
-                <button onclick="showLockedToast(10)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 10</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 10 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 11 -->
-                <button onclick="showLockedToast(11)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 11</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 11 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 12 -->
-                <button onclick="showLockedToast(12)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 12</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 12 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 13 -->
-                <button onclick="showLockedToast(13)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 13</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 13 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 14 -->
-                <button onclick="showLockedToast(14)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 14</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 14 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 15 -->
-                <button onclick="showLockedToast(15)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 15</span>
-                        <span class="text-xl">🔒</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 15 - 尚未開放</h3>
-                        <p class="text-xs text-slate-400 mt-1">未解鎖關卡 🔒</p>
-                    </div>
-                </button>
-
-                <!-- Week 16 -->
-                <button onclick="showLockedToast(16)" class="level-btn-locked p-4 flex flex-col justify-between h-36 text-left text-slate-500">
-                    <div class="flex justify-between items-start">
-                        <span class="bg-slate-300 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-full border border-slate-400">STAGE 16</span>
-                        <span class="text-xl">🏆</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-slate-600">Week 16 - 期末大挑戰</h3>
-                        <p class="text-xs text-slate-400 mt-1">最終關卡 🔒</p>
-                    </div>
-                </button>
-
-            </div>
+            <div id="levels-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 px-2"></div>
         </section>
 
     </main>
@@ -430,59 +221,11 @@
     <div id="toast">🔒 第 X 週關卡尚未解鎖喔！</div>
 
     <script>
-        // 生成動態水底泡泡
-        function createBubbles() {
-            const container = document.getElementById('bubbles-container');
-            const bubbleCount = 20;
-
-            for (let i = 0; i < bubbleCount; i++) {
-                const bubble = document.createElement('div');
-                bubble.classList.add('bubble');
-                
-                // 隨機尺寸 (8px ~ 32px)
-                const size = Math.random() * 24 + 8;
-                bubble.style.width = `${size}px`;
-                bubble.style.height = `${size}px`;
-                
-                // 隨機水平位置
-                bubble.style.left = `${Math.random() * 100}%`;
-                
-                // 隨機上升動畫時間 (6s ~ 14s) 與延遲
-                const duration = Math.random() * 8 + 6;
-                const delay = Math.random() * 5;
-                bubble.style.animationDuration = `${duration}s`;
-                bubble.style.animationDelay = `${delay}s`;
-
-                container.appendChild(bubble);
-            }
-        }
-
-        // 點擊未解鎖關卡的提示訊息
-        let toastTimeout;
-        function showLockedToast(weekNum) {
-            const toast = document.getElementById('toast');
-            toast.innerText = `🔒 Week ${weekNum} 關卡尚未解鎖，請繼續努力破關！`;
-            toast.classList.add('show');
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
-        }
-
-        // 頁面載入完成後啟動動畫
-        window.onload = function() {
-            createBubbles();
-        };
-    </script>
-</body>
-</html>
-<script>
-        // 1. 關卡資料設定（已解鎖 Week 1、Week 2、Week 4 悄悄話）
+        // 1. 關卡資料設定 (Week 1 ~ 4 皆已解鎖)
         const levels = [
             { week: 1, title: 'Week 1 - 數位名片', icon: '💳', unlocked: true, url: 'w1/index.html', tagColor: 'bg-[#FFE370]' },
             { week: 2, title: 'Week 2 - 今天吃甚麼?', icon: '🍜', unlocked: true, url: 'w2/index.html', tagColor: 'bg-[#FF8F9C] text-white' },
-            { week: 3, title: 'Week 3 - 尚未開放', icon: '🔒', unlocked: false },
+            { week: 3, title: 'Week 3 - 迷因生產器', icon: '🖼️', unlocked: true, url: 'w3/index.html', tagColor: 'bg-[#FFE370] text-[#2A4858]' },
             { week: 4, title: 'Week 4 - 悄悄話', icon: '💬', unlocked: true, url: 'w4/index.html', tagColor: 'bg-[#71D8DE] text-[#2A4858]' },
             { week: 5, title: 'Week 5 - 尚未開放', icon: '🔒', unlocked: false },
             { week: 6, title: 'Week 6 - 尚未開放', icon: '🔒', unlocked: false },
@@ -501,6 +244,8 @@
         // 2. 渲染關卡與更新進度條
         function renderLevels() {
             const gridContainer = document.getElementById('levels-grid');
+            if (!gridContainer) return;
+
             const total = levels.length;
             const unlockedCount = levels.filter(level => level.unlocked).length;
             const percentage = ((unlockedCount / total) * 100).toFixed(1);
@@ -593,3 +338,5 @@
             renderLevels();
         };
     </script>
+</body>
+</html>

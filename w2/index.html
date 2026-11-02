@@ -4,14 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>今天吃什麼？隨機抽籤機</title>
-    <!-- 引入外部 CSS 樣式檔 -->
-    <link rel="stylesheet" href="style.css">
+    
     <!-- 引入 Google Fonts (圓潤可愛字體) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-    <!-- 引入外部 JavaScript 檔 -->
-    <script src="script.js" defer></script>
+    
+    <!-- 樣式設定 (CSS) -->
+    <style>
+        /* ===== 全局與字體設定 ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Zen Maru Gothic', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+        }
+
+        body {
+            background-color: #fef6e4; /* 柔和粉黃背景 */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ===== 主要卡片外觀 (馬卡龍卡片風格) ===== */
+        .card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(243, 218, 218, 0.7);
+            border: 4px solid #fff3f5;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* ===== 標題文字風格 ===== */
+        .title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #f582ae; /* 馬卡龍草莓粉 */
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        /* 彈跳動畫類別 */
+        .bounce {
+            animation: popBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popBounce {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            70% {
+                transform: scale(0.95);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ===== 美食圖片區域 ===== */
+        .image-container {
+            width: 100%;
+            height: 220px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            border: 3px solid #e8e8e8;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== 按鈕通用設定 ===== */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        /* 抽籤按鈕 (薄荷綠) */
+        .btn-draw {
+            background-color: #8bd3dd;
+            color: #001858;
+            box-shadow: 0 6px 0px #6bb2bc;
+        }
+
+        .btn-draw:hover {
+            background-color: #a2e1e9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px #6bb2bc;
+        }
+
+        .btn-draw:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #6bb2bc;
+        }
+
+        /* Google Map 按鈕 (馬卡龍橘黃) */
+        .btn-map {
+            background-color: #f3d2c1;
+            color: #001858;
+            box-shadow: 0 6px 0px #d8b4a0;
+        }
+
+        .btn-map:hover {
+            background-color: #fadbcc;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px #d8b4a0;
+        }
+
+        .btn-map:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #d8b4a0;
+        }
+
+        /* 隱藏元素用 */
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -33,217 +177,8 @@
         </a>
     </div>
 
-</body>
-</html>
-/* ===== 全局與字體設定 ===== */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Zen Maru Gothic', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-}
+    <!-- 邏輯控制 (JavaScript) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
 
-body {
-    background-color: #fef6e4; /* 柔和粉黃背景 */
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-/* ===== 主要卡片外觀 (馬卡龍卡片風格) ===== */
-.card {
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 420px;
-    padding: 40px 30px;
-    border-radius: 30px;
-    box-shadow: 0 15px 35px rgba(243, 218, 218, 0.7);
-    border: 4px solid #fff3f5;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-}
-
-/* ===== 標題文字風格 ===== */
-.title {
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: #f582ae; /* 馬卡龍草莓粉 */
-    min-height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease;
-}
-
-/* 彈跳動畫類別 */
-.bounce {
-    animation: popBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-@keyframes popBounce {
-    0% {
-        transform: scale(0.3);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.15);
-    }
-    70% {
-        transform: scale(0.95);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* ===== 美食圖片區域 ===== */
-.image-container {
-    width: 100%;
-    height: 220px;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    border: 3px solid #e8e8e8;
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== 按鈕通用設定 ===== */
-.btn {
-    width: 100%;
-    padding: 16px 24px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.2s ease;
-}
-
-/* 抽籤按鈕 (薄荷綠) */
-.btn-draw {
-    background-color: #8bd3dd;
-    color: #001858;
-    box-shadow: 0 6px 0px #6bb2bc;
-}
-
-.btn-draw:hover {
-    background-color: #a2e1e9;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 0px #6bb2bc;
-}
-
-.btn-draw:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0px #6bb2bc;
-}
-
-/* Google Map 按鈕 (馬卡龍橘黃) */
-.btn-map {
-    background-color: #f3d2c1;
-    color: #001858;
-    box-shadow: 0 6px 0px #d8b4a0;
-}
-
-.btn-map:hover {
-    background-color: #fadbcc;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 0px #d8b4a0;
-}
-
-.btn-map:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0px #d8b4a0;
-}
-
-/* 隱藏元素用 */
-.hidden {
-    display: none !important;
-}
-// 確保 HTML 載入完全後才執行 JS 程式碼
-document.addEventListener('DOMContentLoaded', () => {
-
-    // 1. 餐廳選項資料清單（名稱、圖片網址、Google Map 搜尋連結）
-    const foodList = [
-        {
-            name: "瓦城",
-            image: "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80",
-            mapUrl: "https://www.google.com/maps/search/瓦城"
-        },
-        {
-            name: "好正點",
-            image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80",
-            mapUrl: "https://www.google.com/maps/search/好正點"
-        },
-        {
-            name: "金色三麥",
-            image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80",
-            mapUrl: "https://www.google.com/maps/search/金色三麥"
-        },
-        {
-            name: "燒肉",
-            image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
-            mapUrl: "https://www.google.com/maps/search/燒肉"
-        },
-        {
-            name: "貓廚火鍋",
-            image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
-            mapUrl: "https://www.google.com/maps/search/貓廚火鍋"
-        }
-    ];
-
-    // 2. 取得頁面中的元素
-    const mainTitle = document.getElementById('main-title');
-    const drawBtn = document.getElementById('draw-btn');
-    const imageContainer = document.getElementById('image-container');
-    const foodImage = document.getElementById('food-image');
-    const mapBtn = document.getElementById('map-btn');
-
-    // 3. 按鈕點擊事件
-    drawBtn.addEventListener('click', () => {
-        // 從清單中隨機抽取一個 index
-        const randomIndex = Math.floor(Math.random() * foodList.length);
-        const selectedFood = foodList[randomIndex];
-
-        // 移除先前的動畫 class，確保每次點擊都可以重複觸發動畫
-        mainTitle.classList.remove('bounce');
-        
-        // 觸發重新繪製 (Reflow)
-        void mainTitle.offsetWidth;
-
-        // 更新標題內容並重新加入彈跳動畫 css
-        mainTitle.textContent = `今天吃：${selectedFood.name}！`;
-        mainTitle.classList.add('bounce');
-
-        // 更新圖片網址並顯示圖片區塊
-        foodImage.src = selectedFood.image;
-        foodImage.alt = selectedFood.name;
-        imageContainer.classList.remove('hidden');
-
-        // 更新 Google Maps 連結並顯示馬上出發按鈕
-        mapBtn.href = selectedFood.mapUrl;
-        mapBtn.classList.remove('hidden');
-        
-        // 修改抽籤按鈕的文字
-        drawBtn.textContent = '不滿意？再抽一次！';
-    });
-
-});
+            // 1. 餐廳

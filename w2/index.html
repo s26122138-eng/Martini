@@ -181,4 +181,68 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // 1. 餐廳
+            // 1. 餐廳選項資料清單
+            const foodList = [
+                {
+                    name: "瓦城",
+                    image: "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80",
+                    mapUrl: "https://www.google.com/maps/search/瓦城"
+                },
+                {
+                    name: "好正點",
+                    image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80",
+                    mapUrl: "https://www.google.com/maps/search/好正點"
+                },
+                {
+                    name: "金色三麥",
+                    image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80",
+                    mapUrl: "https://www.google.com/maps/search/金色三麥"
+                },
+                {
+                    name: "燒肉",
+                    image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                    mapUrl: "https://www.google.com/maps/search/燒肉"
+                },
+                {
+                    name: "火鍋",
+                    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+                    mapUrl: "https://www.google.com/maps/search/火鍋"
+                }
+            ];
+
+            // 2. 取得頁面中的元素
+            const mainTitle = document.getElementById('main-title');
+            const drawBtn = document.getElementById('draw-btn');
+            const imageContainer = document.getElementById('image-container');
+            const foodImage = document.getElementById('food-image');
+            const mapBtn = document.getElementById('map-btn');
+
+            // 3. 按鈕點擊事件
+            drawBtn.addEventListener('click', () => {
+                const randomIndex = Math.floor(Math.random() * foodList.length);
+                const selectedFood = foodList[randomIndex];
+
+                // 觸發重新繪製以重複播放彈跳動畫
+                mainTitle.classList.remove('bounce');
+                void mainTitle.offsetWidth;
+
+                // 更新標題內容並加入動畫
+                mainTitle.textContent = `今天吃：${selectedFood.name}！`;
+                mainTitle.classList.add('bounce');
+
+                // 更新圖片
+                foodImage.src = selectedFood.image;
+                foodImage.alt = selectedFood.name;
+                imageContainer.classList.remove('hidden');
+
+                // 更新 Google Maps 連結
+                mapBtn.href = selectedFood.mapUrl;
+                mapBtn.classList.remove('hidden');
+                
+                drawBtn.textContent = '不滿意？再抽一次！';
+            });
+
+        });
+    </script>
+</body>
+</html>

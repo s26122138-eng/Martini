@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人數位名片</title>
+    
+    <!-- CSS 樣式直接嵌入在 HTML 的 style 標籤內 -->
+    <style>
+        /* 基礎設定與字體 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* 背景與整體畫面置中 (粉藍/粉紫微漸層馬卡龍色) */
+        body {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 名片主體 (馬卡龍白色卡片 + 圓角 + 柔和陰影) */
+        .profile-card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 350px;
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(100, 100, 100, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        /* 滑鼠懸停在卡片上時輕微向上浮起 */
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 圓形大頭貼照片 */
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid #fff5c3;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 名字與自我介紹樣式 */
+        .name {
+            font-size: 1.5rem;
+            color: #4a4a4a;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .bio {
+            font-size: 0.95rem;
+            color: #7a7a7a;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* 按鈕區域與樣式 */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            display: block;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Instagram 馬卡龍粉紅按鈕 */
+        .btn-instagram {
+            background-color: #ffb7b2;
+            color: #ffffff;
+        }
+
+        .btn-instagram:hover {
+            background-color: #ff9e99;
+            box-shadow: 0 6px 15px rgba(255, 183, 178, 0.4);
+        }
+
+        /* Email 馬卡龍薄荷綠按鈕 */
+        .btn-email {
+            background-color: #b5ead7;
+            color: #2c5d4d;
+        }
+
+        .btn-email:hover {
+            background-color: #9cdcc5;
+            box-shadow: 0 6px 15px rgba(181, 234, 215, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 名片主要卡片容器 -->
+    <div class="profile-card">
+        
+        <!-- 1. 圓形大頭貼照片 -->
+        <img class="avatar" src="https://i.postimg.cc/wMdK9f5N/IMG-5375.jpg" alt="個人大頭貼">
+        
+        <!-- 2. 名字與簡短自我介紹 -->
+        <h1 class="name">Martini</h1>
+        <p class="bio">✨ hello</p>
+        
+        <!-- 3. 下方連結按鈕 -->
+        <div class="button-group">
+            <a href="https://instagram.com" target="_blank" class="btn btn-instagram">Instagram</a>
+            <a href="mailto:your-email@example.com" class="btn btn-email">Email Me</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

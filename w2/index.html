@@ -204,9 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
             mapUrl: "https://www.google.com/maps/search/燒肉"
         },
         {
-            name: "火鍋",
+            name: "貓廚火鍋",
             image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
-            mapUrl: "https://www.google.com/maps/search/火鍋"
+            mapUrl: "https://www.google.com/maps/search/貓廚火鍋"
         }
     ];
 
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const foodImage = document.getElementById('food-image');
     const mapBtn = document.getElementById('map-btn');
 
-    // 3. 按鈕點擊事件 Listeners
+    // 3. 按鈕點擊事件
     drawBtn.addEventListener('click', () => {
         // 從清單中隨機抽取一個 index
         const randomIndex = Math.floor(Math.random() * foodList.length);
